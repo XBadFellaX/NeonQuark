@@ -70,3 +70,29 @@ test('observer stops after fifteen seconds on unrelated pages', () => {
     result.finish();
     assert.equal(result.disconnected(), true);
 });
+test('metadata and navigation support new single-part suffixes and www hosts', () => {
+    const includes = [...source.matchAll(/^\/\/ @include\s+(\S+)/gm)].map(([, pattern]) =>
+        new RegExp('^' + pattern.split('*').map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*') + '$'));
+    for (const suffix of ['club', 'cc', 'com', 'ca', 'xyz', 'technology']) {
+        for (const prefix of ['', 'www.']) {
+            const page = `https://${prefix}greenmotors.${suffix}/homelander/`;
+            for (const href of [page, `https://${prefix}greenmotors.${suffix}/?id=new`]) {
+                assert.ok(includes.some(pattern => pattern.test(href)), href);
+                assert.deepEqual(run({ href, html: `s('o','${encode(target, page)}')` }).redirects, [target]);
+            }
+            assert.deepEqual(run({ href: page, stored: { value: encode(target, page), expiry: Date.now() + 60000 } }).redirects, [target]);
+        }
+    }
+});
+test('hostname guard ignores deceptive, unrelated and unsupported URLs before observing', () => {
+    for (const href of ['https://greenmotors.cc.evil.example/', 'https://greenmotors.evil.example/',
+        'https://other.example/greenmotors.cc/', 'https://notgreenmotors.cc/',
+        'https://greenmotors.cc@evil.example/', 'https://greenmotors.cc:8443/',
+        'https://user:pass@greenmotors.cc/', 'http://greenmotors.cc/',
+        'https://greenmotors.co.uk/']) {
+        const page = new URL('/homelander/', href).href;
+        const result = run({ href, html: `s('o','${encode(target, page)}')` });
+        assert.deepEqual(result.redirects, [], href);
+        assert.equal(result.finish, undefined, href);
+    }
+});

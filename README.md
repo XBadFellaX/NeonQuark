@@ -30,6 +30,7 @@ You can also download the `.user.js` file and import it from your phone's storag
 
 - **Self-contained.** No dependencies, remote libraries, or build step.
 - **Limited scope.** Runs only on the pages listed in the script's metadata.
+- **Flexible addresses.** Follows single-part domain-extension changes automatically, including `www` variants, while ignoring unrelated hostnames. A changed site name or compound suffix requires an update.
 - **No added telemetry.** No analytics or external collection service.
 - **Easy to keep current.** Update URLs are included for managers that support update checks.
 
@@ -42,7 +43,7 @@ node --check ion-drift.user.js
 node --test test-ion-drift.cjs
 ```
 
-The tests cover decoding, late-loading content, stale stored state, destination validation, and cleanup.
+The tests cover decoding, domain-extension changes, hostname isolation, late-loading content, stale stored state, destination validation, and cleanup.
 
 ## Personal toolkit
 
