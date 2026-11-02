@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ion Drift
 // @namespace    https://github.com/XBadFellaX/NeonQuark
-// @version      1.0.1
+// @version      1.0.2
 // @homepageURL  https://github.com/XBadFellaX/NeonQuark
 // @downloadURL  https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/ion-drift.user.js
 // @updateURL    https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/ion-drift.user.js
@@ -33,7 +33,8 @@
         const target = new URL(atob(data.o));
         const mediator = new URL(data.l);
         if (target.protocol !== 'https:' || target.username || target.password || target.port ||
-            !/^(?:www\.)?(?:hubcloud|hblinks)\.[a-z]+$/.test(target.hostname) ||
+            (!/^(?:www\.)?(?:hubcloud|hblinks)\.[a-z]+$/.test(target.hostname) &&
+                target.hostname !== 'new.multicloudlinks.com') ||
             mediator.origin !== location.origin) {
             throw new Error('Unexpected redirect destination');
         }
