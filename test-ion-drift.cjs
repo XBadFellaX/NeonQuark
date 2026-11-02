@@ -49,6 +49,12 @@ test('document-start detects a script added later', () => {
 test('mediator resumes an unexpired stored link', () => {
     assert.deepEqual(run({ stored: { value: encode(), expiry: Date.now() + 60000 } }).redirects, [target]);
 });
+test('player destination works from inline content and mediator storage', () => {
+    const player = 'https://new.multicloudlinks.com/player.php/?v=example';
+    const value = encode(player);
+    assert.deepEqual(run({ html: `s('o','${value}')` }).redirects, [player]);
+    assert.deepEqual(run({ stored: { value, expiry: Date.now() + 60000 } }).redirects, [player]);
+});
 test('stale, expired, unrelated and id-page stored links are ignored', () => {
     for (const options of [
         { href: 'https://greenmotors.cc/?id=new', stored: { value: encode(), expiry: Date.now() + 60000 } },
@@ -61,7 +67,13 @@ test('malformed payloads and unexpected destinations leave the page available', 
     for (const value of ['bad', encode('javascript:alert(1)'), encode('http://hubcloud.ist/a'),
         encode('https://hubcloud.ist.evil.example/a'), encode('https://hubcloud.ist@evil.example/a'),
         encode('https://user:pass@hubcloud.ist/a'), encode('https://hubcloud.ist:8443/a'),
-        encode(target, 'https://evil.example/homelander/')]) {
+        encode(target, 'https://evil.example/homelander/'),
+        encode('https://new.multicloudlinks.com.evil.example/player.php/'),
+        encode('https://evil.new.multicloudlinks.com/player.php/'),
+        encode('https://new.multicloudlinks.com@evil.example/player.php/'),
+        encode('http://new.multicloudlinks.com/player.php/'),
+        encode('https://user:pass@new.multicloudlinks.com/player.php/'),
+        encode('https://new.multicloudlinks.com:8443/player.php/')]) {
         assert.deepEqual(run({ html: `s('o','${value}')` }).redirects, []);
     }
 });
