@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Ion Drift
 // @namespace    https://github.com/XBadFellaX/NeonQuark
-// @version      1.0.0
+// @version      1.0.1
 // @homepageURL  https://github.com/XBadFellaX/NeonQuark
 // @downloadURL  https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/ion-drift.user.js
 // @updateURL    https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/ion-drift.user.js
 // @description  A small personal browser navigation utility.
-// @match        https://greenmotors.club/*
-// @match        https://greenmotors.cc/*
+// @include      https://greenmotors.*/*
+// @include      https://www.greenmotors.*/*
 // @run-at       document-start
 // @grant        none
 // @noframes
@@ -15,6 +15,11 @@
 
 (() => {
     'use strict';
+
+    const page = new URL(location.href);
+    // shortcut: single-part suffixes only; update if the site changes its name or uses a compound suffix.
+    if (page.protocol !== 'https:' || page.username || page.password || page.port ||
+        !/^(?:www\.)?greenmotors\.[a-z]{2,63}$/.test(page.hostname)) return;
 
     let redirected = false;
     let observer;
