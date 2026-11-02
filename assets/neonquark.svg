@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">NeonQuark</title>
+  <desc id="desc">A dark Material-inspired banner with a violet atom emblem and the tagline Personal scripts. Small by design.</desc>
+  <defs>
+    <linearGradient id="surface" x2="1" y2="1">
+      <stop stop-color="#151322"/><stop offset="1" stop-color="#211d32"/>
+    </linearGradient>
+    <clipPath id="clip"><rect width="1200" height="360" rx="28"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="1200" height="360" fill="url(#surface)"/>
+    <circle cx="1140" cy="18" r="230" fill="#292342"/>
+    <circle cx="1110" cy="20" r="153" fill="#32294e"/>
+    <circle cx="1140" cy="330" r="110" fill="#23343d"/>
+    <rect x="64" y="92" width="176" height="176" rx="48" fill="#36304e"/>
+    <g transform="translate(152 180)" fill="none" stroke="#d0bcff" stroke-width="4">
+      <ellipse rx="63" ry="24" transform="rotate(-35)"/>
+      <ellipse rx="63" ry="24" transform="rotate(35)"/>
+      <ellipse rx="63" ry="24" transform="rotate(90)"/>
+      <circle r="9" fill="#b7f0db" stroke="none"/>
+    </g>
+    <g font-family="Segoe UI, Roboto, Arial, sans-serif">
+      <rect x="284" y="88" width="188" height="32" rx="16" fill="#373047"/>
+      <text x="378" y="109" fill="#d0bcff" font-size="12" font-weight="600" letter-spacing="2" text-anchor="middle">PERSONAL TOOLKIT</text>
+      <text x="280" y="199" fill="#f0eaf8" font-size="68" font-weight="600" letter-spacing="-2">NeonQuark</text>
+      <text x="284" y="244" fill="#c7bfd4" font-size="22">Personal scripts. Small by design.</text>
+      <circle cx="291" cy="279" r="4" fill="#b7f0db"/>
+      <text x="306" y="285" fill="#b7f0db" font-size="14" letter-spacing="1">LIGHTWEIGHT BY DEFAULT</text>
+    </g>
+  </g>
+</svg>
