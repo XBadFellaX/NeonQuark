@@ -955,7 +955,7 @@ class FakeGh:
         prefix = f"repos/{self.repo}/releases/tags/"
         if endpoint.startswith(prefix):
             release = self._release(endpoint[len(prefix):])
-            if release is None:
+            if release is None or release.get("draft") is True:
                 return (1, b"", b"gh: Not Found (HTTP 404)")
             return (
                 0,

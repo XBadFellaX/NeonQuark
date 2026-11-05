@@ -917,18 +917,26 @@ class GhPublisher:
     def get_release_by_tag(self, tag: str) -> dict[str, Any] | None:
         endpoint = f"repos/{self.repo}/releases/tags/{urllib.parse.quote(tag, safe='')}"
         code, stdout, stderr = self._run(["api", endpoint])
-        if code != 0:
+        if code == 0:
+            try:
+                payload = json.loads(stdout.decode("utf-8"))
+                if isinstance(payload, dict):
+                    return payload
+            except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+                raise PublishError(f"gh returned invalid JSON for {endpoint}") from exc
+        else:
             text = (stderr or stdout).decode("utf-8", "replace")
-            if "HTTP 404" in text or "Not Found" in text:
-                return None
-            raise self._failure(["api", endpoint], code, stdout, stderr)
-        try:
-            payload = json.loads(stdout.decode("utf-8"))
-        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-            raise PublishError(f"gh returned invalid JSON for {endpoint}") from exc
-        if not isinstance(payload, dict):
-            raise PublishError(f"gh returned an unexpected payload for {endpoint}")
-        return payload
+            if "HTTP 404" not in text and "Not Found" not in text:
+                raise self._failure(["api", endpoint], code, stdout, stderr)
+
+        # In GitHub's API, draft releases are not returned by /releases/tags/{tag}.
+        # Search repository releases to find a matching draft or unindexed release.
+        matching = [item for item in self.list_releases() if item.get("tag_name") == tag]
+        if len(matching) > 1:
+            raise ConflictError(
+                f"multiple releases or drafts exist for {tag}; operator review required"
+            )
+        return matching[0] if matching else None
 
     def list_releases(self) -> list[dict[str, Any]]:
         endpoint = f"repos/{self.repo}/releases?per_page=100"
