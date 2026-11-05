@@ -1,0 +1,105 @@
+name: Neon Relay
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Upstream tag to mirror (default: latest stable)"
+        required: false
+        default: ""
+      dry_run:
+        description: "Dry run without publishing"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: neon-relay
+  cancel-in-progress: false
+jobs:
+  dry-run:
+    name: Prepare and validate APKs
+    if: >-
+      github.event_name == 'workflow_dispatch' && inputs.dry_run == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the triggering revision
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Run relay checks
+        run: |
+          python --version
+          python -m unittest discover -s NeonRelay -p "test_*.py"
+          node --check ion-drift.user.js
+          node --test test-ion-drift.cjs
+
+      - name: Prepare APKs without publishing
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          args=(--output "$RUNNER_TEMP/neon-relay-out")
+          if [ -n "$INPUT_TAG" ]; then
+            args+=(--tag "$INPUT_TAG")
+          fi
+          args+=(--summary-file "$GITHUB_STEP_SUMMARY")
+          python NeonRelay/relay.py "${args[@]}"
+  publish:
+    name: Publish mirrored APKs
+    if: >-
+      (github.event_name == 'schedule' || inputs.dry_run == false)
+      && github.repository == 'XBadFellaX/NeonQuark'
+      && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the triggering revision
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Run relay checks
+        run: |
+          python --version
+          python -m unittest discover -s NeonRelay -p "test_*.py"
+          node --check ion-drift.user.js
+          node --test test-ion-drift.cjs
+
+      - name: Prepare and publish APKs
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          args=(--output "$RUNNER_TEMP/neon-relay-out")
+          if [ -n "$INPUT_TAG" ]; then
+            args+=(--tag "$INPUT_TAG")
+          fi
+          args+=(
+            --publish
+            --repo "$GITHUB_REPOSITORY"
+            --target-commit "$GITHUB_SHA"
+            --summary-file "$GITHUB_STEP_SUMMARY"
+          )
+          python NeonRelay/relay.py "${args[@]}"

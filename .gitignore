@@ -1,3 +1,14 @@
 .DS_Store
 Thumbs.db
 node_modules/
+
+# Neon Relay local outputs
+temp-*/
+staging/
+/NeonRelay/*.apk
+/NeonRelay/*.tar.gz
+/NeonRelay/SHA256SUMS
+/NeonRelay/provenance.json
+/NeonRelay/plezy-LICENSE.txt
+__pycache__/
+*.pyc

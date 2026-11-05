@@ -14,6 +14,7 @@
 | Script | What it does | Get it |
 | :--- | :--- | :--- |
 | **Ion Drift** | A lightweight browser navigation helper for my everyday setup. | [Install userscript](https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/ion-drift.user.js) |
+| **Neon Relay** | Verified direct APK downloads for Plezy on ARM64 and ARMv7 Android devices. | [Guide](NeonRelay/README.md) |
 
 ## Add to AdGuard
 
@@ -28,11 +29,11 @@ You can also download the `.user.js` file and import it from your phone's storag
 
 ## Small by design
 
-- **Self-contained.** No dependencies, remote libraries, or build step.
-- **Limited scope.** Runs only on the pages listed in the script's metadata.
-- **Flexible addresses.** Follows single-part domain-extension changes automatically, including `www` variants, while ignoring unrelated hostnames. A changed site name or compound suffix requires an update.
+- **Ion Drift is self-contained.** No dependencies, remote libraries, or build step. Neon Relay uses only the Python standard library.
+- **Limited scope.** Ion Drift runs only on the pages listed in its metadata.
+- **Flexible addresses (Ion Drift).** Follows single-part domain-extension changes automatically, including `www` variants, while ignoring unrelated hostnames. A changed site name or compound suffix requires an update.
 - **No added telemetry.** No analytics or external collection service.
-- **Easy to keep current.** Update URLs are included for managers that support update checks.
+- **Easy to keep current (Ion Drift).** Update URLs are included for managers that support update checks.
 
 ## Local checks
 
@@ -44,6 +45,12 @@ node --test test-ion-drift.cjs
 ```
 
 The tests cover decoding, domain-extension changes, hostname isolation, late-loading content, stale stored state, destination validation, and cleanup.
+
+With Python 3.12 or newer installed, the Neon Relay helper has its own offline suite:
+
+```sh
+python -m unittest discover -s NeonRelay -p "test_*.py"
+```
 
 ## Personal toolkit
 
