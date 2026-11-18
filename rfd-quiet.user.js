@@ -3,8 +3,8 @@
 // @namespace    https://github.com/XBadFellaX/NeonQuark
 // @version      1.0.3
 // @homepageURL  https://github.com/XBadFellaX/NeonQuark
-// @downloadURL  https://raw.githubusercontent.com/XBadFellaX/NeonQuark/refs/heads/main/rfd-quiet.user.js
-// @updateURL    https://raw.githubusercontent.com/XBadFellaX/NeonQuark/refs/heads/main/rfd-quiet.user.js
+// @downloadURL  https://raw.githubusercontent.com/XBadFellaX/NeonQuark/refs/heads/main/rfd-quiet.user.js?v=1.0.3
+// @updateURL    https://raw.githubusercontent.com/XBadFellaX/NeonQuark/refs/heads/main/rfd-quiet.user.js?v=1.0.3
 // @description  Hide sponsored RedFlagDeals listings and keep RFD's built-in dark theme.
 // @include      https://redflagdeals.com/*
 // @include      https://*.redflagdeals.com/*
