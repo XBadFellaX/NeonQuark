@@ -5,13 +5,14 @@ const test = require('node:test');
 
 const source = fs.readFileSync(`${__dirname}/rfd-quiet.user.js`, 'utf8');
 
-function run({ href = 'https://forums.redflagdeals.com/hot-deals-f9/', theme = 'light' } = {}) {
+function run({ href = 'https://forums.redflagdeals.com/hot-deals-f9/', theme = 'light', cookie = '' } = {}) {
     const root = { getAttribute(name) { return name === 'data-theme' ? theme : null; }, setAttribute(name, value) { if (name === 'data-theme') theme = value; } };
     const head = { appendChild(node) { nodes.push(node); } };
     const nodes = [];
     const document = {
         documentElement: root,
         head,
+        cookie,
         getElementById(id) { return nodes.find(node => node.id === id) ?? null; },
         createElement(tag) { return { id: '', textContent: '', tagName: tag.toUpperCase() }; },
     };
@@ -26,7 +27,7 @@ function run({ href = 'https://forums.redflagdeals.com/hot-deals-f9/', theme = '
             disconnect() {}
         },
     });
-    return { theme: () => theme, nodes, observerCallback };
+    return { theme: () => theme, nodes, observerCallback, cookie: () => document.cookie };
 }
 
 test('metadata targets redflagdeals hosts', () => {
@@ -59,4 +60,16 @@ test('hostname guard ignores unrelated sites', () => {
     const result = run({ href: 'https://evil-redflagdeals.com/' });
     assert.notEqual(result.theme(), 'dark');
     assert.equal(result.nodes.length, 0);
+});
+
+test('persists the site dark-mode cookie for future requests', () => {
+    const result = run({ cookie: 'loggedin=1' });
+    assert.match(result.cookie(), /rfd_dark_mode=1/);
+});
+
+test('adds homepage dark overrides only on the main site', () => {
+    const home = run({ href: 'https://www.redflagdeals.com/' });
+    const forums = run({ href: 'https://forums.redflagdeals.com/hot-deals-f9/' });
+    assert.match(home.nodes[0].textContent, /\.image-wrapper/);
+    assert.doesNotMatch(forums.nodes[0].textContent, /\.image-wrapper/);
 });
