@@ -14,6 +14,7 @@
 | Script | What it does | Get it |
 | :--- | :--- | :--- |
 | **Ion Drift** | A lightweight browser navigation helper for my everyday setup. | [Install userscript](https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/ion-drift.user.js) |
+| **RFD Quiet** | Hides sponsored RedFlagDeals forum posts and sponsored ad slots, and keeps RFD's built-in dark theme on the homepage and forums. | [Install userscript](https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/rfd-quiet.user.js) |
 | **Neon Relay** | Verified direct APK downloads for Plezy on ARM64 and ARMv7 Android devices. | [Guide](NeonRelay/README.md) |
 
 ## Add to AdGuard
@@ -22,7 +23,7 @@ For the full **AdGuard for Android** app:
 
 1. Open **Settings → Filtering → Extensions**.
 2. Choose **Add extension → Import from file or URL**.
-3. Paste the [Ion Drift script URL](https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/ion-drift.user.js) and enable it.
+3. Paste a script URL ([Ion Drift](https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/ion-drift.user.js) or [RFD Quiet](https://raw.githubusercontent.com/XBadFellaX/NeonQuark/main/rfd-quiet.user.js)) and enable it.
 4. Keep protection and HTTPS filtering enabled for your browser. Finish AdGuard's certificate setup if prompted.
 
 You can also download the `.user.js` file and import it from your phone's storage. AdGuard DNS alone cannot run userscripts; AdGuard for iOS does not provide this custom userscript manager.
@@ -41,7 +42,9 @@ With Node.js installed:
 
 ```sh
 node --check ion-drift.user.js
+node --check rfd-quiet.user.js
 node --test test-ion-drift.cjs
+node --test test-rfd-quiet.cjs
 ```
 
 The tests cover decoding, domain-extension changes, hostname isolation, late-loading content, stale stored state, destination validation, and cleanup.
